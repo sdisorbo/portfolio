@@ -35,7 +35,7 @@ export default function Home() {
             <Linkedin size={16} /> LinkedIn
           </Link>
           <Link
-            href="/Samuel_Disorbo_2_9_26.pdf"
+            href="/Samuel_DiSorbo_2_9_26.pdf"
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-mahogany/80 hover:text-accent hover:border-accent transition-all text-sm font-medium"
           >
             <Download size={16} /> Download CV
