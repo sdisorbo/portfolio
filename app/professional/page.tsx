@@ -50,8 +50,9 @@ const skills = [
 
 const extracurriculars = [
   "Accenture Tech Strategy Resources Assets Team — Generative AI agent development (2024–Present)",
-  "Michigan Data Science Team — Project Lead (2021–2025)",
+  "Accenture Trading, Investments and Optimization Strategy Analyst (2026–Present)",
   "SIFMA Foundation Stock Market Competition — 2nd Place (2021)",
+  "Accenture 2026 Analyst Pitch Competition — Top-10 Finalist",
 ];
 
 export default function Professional() {
@@ -100,7 +101,7 @@ export default function Professional() {
 
       {/* Extracurriculars */}
       <section>
-        <h2 className="text-2xl font-semibold mb-6">Extracurricular</h2>
+        <h2 className="text-2xl font-semibold mb-6">Extracurricular / Awards</h2>
         <div className="p-6 rounded-xl border border-border bg-card space-y-2">
           {extracurriculars.map((item) => (
             <p key={item} className="text-sm text-mahogany/70 leading-relaxed flex gap-2">
