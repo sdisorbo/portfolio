@@ -14,6 +14,8 @@ const isoNumericMap: Record<string, number> = {
   GBR: 826,
   ISL: 352,
   IRL: 372,
+  NOR: 578,
+  PRT: 620,
 };
 
 const numericToDestination: Record<number, Destination> = {};
