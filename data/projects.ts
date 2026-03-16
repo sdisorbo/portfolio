@@ -30,6 +30,13 @@ export const projects: Project[] = [
     images: ["/alice_project1.png", "/alice_project2.png", "/alice_project3.png"],
   },
   {
+    title: "MLB Prediction Engine",
+    description: "A full-stack MLB analytics platform inspired by FiveThirtyEight's prediction pages. The engine pulls live data from the MLB Stats API, computes ELO ratings game-by-game across the full season, and runs daily Monte Carlo playoff simulations to generate win probabilities by round for all 30 teams. A GitHub Actions cron job refreshes the data every morning and commits updated JSON files, which the Next.js frontend consumes directly. Features include an interactive standings table with ELO ratings and playoff odds, a pitcher stats dot plot grouped by division, and a team ELO rating history chart.",
+    tags: ["Python", "Next.js", "ELO Rating", "Monte Carlo Simulation", "MLB Stats API", "GitHub Actions", "Sports Analytics"],
+    link: "https://samalytics-mlb.vercel.app/standings",
+    images: ["/mlbproject2.png", "/mlbproject3.png"],
+  },
+  {
     title: "NHL ELO Rating Model & Playoff Simulator",
     description: "An end-to-end NHL analytics pipeline built in R. The model scrapes play-by-play data for a given season, cleans and preprocesses team performance metrics to establish initial ratings, then runs a game-by-game ELO update loop with O(n log n) time complexity to track each team's rating progression across the full season. A separate playoff simulator takes the final ELO ratings, accepts the 16 playoff teams as input, and runs 10,000 Monte Carlo simulations to compute each team's probability of advancing through every round — from the first round all the way to the Stanley Cup.",
     tags: ["R", "ELO Rating", "Monte Carlo Simulation", "Sports Analytics", "Web Scraping"],
