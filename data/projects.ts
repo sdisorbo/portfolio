@@ -30,6 +30,13 @@ export const projects: Project[] = [
     images: ["/alice_project1.png", "/alice_project2.png", "/alice_project3.png"],
   },
   {
+    title: "NHL ELO Rating Model & Playoff Simulator",
+    description: "An end-to-end NHL analytics pipeline built in R. The model scrapes play-by-play data for a given season, cleans and preprocesses team performance metrics to establish initial ratings, then runs a game-by-game ELO update loop with O(n log n) time complexity to track each team's rating progression across the full season. A separate playoff simulator takes the final ELO ratings, accepts the 16 playoff teams as input, and runs 10,000 Monte Carlo simulations to compute each team's probability of advancing through every round — from the first round all the way to the Stanley Cup.",
+    tags: ["R", "ELO Rating", "Monte Carlo Simulation", "Sports Analytics", "Web Scraping"],
+    link: "https://github.com/sdisorbo/nhl-elo-model",
+    images: ["/nhlelo_project1.png", "/nhlelo_project2.png", "/nhlelo_project3.png"],
+  },
+  {
     title: "Fine-Tuned GPT-3 Ancient Orator",
     description: "A natural language project that fine-tunes OpenAI's GPT-3 ada model to replicate the voice and rhetorical style of Demosthenes — the most celebrated orator of ancient Athens. Using cleaned and sampled text from the Olynthiac and Other Public Orations, 10,000 excerpts were prepared as training data. The model was fine-tuned for chat completion to emulate Demosthenes' tone, argument structure, and cadence. A self-training loop was built so that each user interaction was fed back into the model's fine-tuning pipeline, allowing accuracy to improve over time.",
     tags: ["Python", "OpenAI API", "GPT-3", "NLP", "Classical Civilization"],
