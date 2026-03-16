@@ -25,7 +25,7 @@ export default function About() {
           Hi! My name is Samuel Fernando DiSorbo - most people call me Sam.
         </p>
         <p>
-          I&apos;m an Analyst at Accenture, where I work across Sourcing &amp; Procurement, as well as Quantitative Analytics for the Accenture Trading, Investments &amp; Optimization Strategy practice.
+          I&apos;m an Analyst at <a href="https://www.accenture.com/us-en" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Accenture</a>, where I work across Sourcing &amp; Procurement, as well as Quantitative Analytics for the Accenture Trading, Investments &amp; Optimization Strategy practice.
           My day-to-day involves turning complex supply chain and procurement data into clear, actionable insights -
           work that sits at the crossroads of rigorous analysis and real savings impact. In addition, I apply quantitative research and model-building to find edges in complex, competitive problem spaces. Beyond my role at Accenture,
           my professional interests span machine learning, AI, financial markets, energy and grid systems, and the
