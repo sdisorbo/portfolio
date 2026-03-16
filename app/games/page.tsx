@@ -114,7 +114,23 @@ async function getRedSoxRatingHistory(): Promise<RatingPoint[]> {
   try {
     const res = await fetch(`${MLB_BASE}/team_ratings_history.json`, { next: { revalidate: 3600 } });
     const data = await res.json();
-    return (data["BOS"] as RatingPoint[]) ?? [];
+    const bosHistory = (data["BOS"] as { date: string; rating: number }[]) ?? [];
+
+    // Build date -> all team ratings map for league high/low
+    const dateMap: Record<string, number[]> = {};
+    for (const teamHistory of Object.values(data) as { date: string; rating: number }[][]) {
+      for (const pt of teamHistory) {
+        if (!dateMap[pt.date]) dateMap[pt.date] = [];
+        dateMap[pt.date].push(pt.rating);
+      }
+    }
+
+    return bosHistory.map((pt) => ({
+      date: pt.date,
+      rating: pt.rating,
+      leagueHigh: Math.max(...(dateMap[pt.date] ?? [pt.rating])),
+      leagueLow: Math.min(...(dateMap[pt.date] ?? [pt.rating])),
+    }));
   } catch {
     return [];
   }
@@ -156,13 +172,36 @@ export default async function Games() {
     <div className="max-w-4xl mx-auto px-6 py-16 space-y-20">
       <h1 className="text-4xl font-bold tracking-tight">Games</h1>
 
+      {/* Chess */}
+      <section>
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="text-2xl font-semibold">♟️ Chess</h2>
+          <span className="text-xs text-mahogany/40">Last updated: {lastUpdated}</span>
+        </div>
+        <p className="text-mahogany/70 text-sm leading-relaxed mb-6">
+          I am an avid chess player, despite my low rating. Follow me in my journey to becoming a better player.
+          My 2026 goal is to reach 1200 in blitz.
+        </p>
+        <ChessStats data={chessData} />
+        <ChessRatingChart data={ratingHistory} />
+        <p className="mt-4 text-xs text-mahogany/40">
+          Live data from{" "}
+          <a href={`https://www.chess.com/member/${CHESS_USER}`} target="_blank" className="hover:text-accent underline">
+            chess.com/member/{CHESS_USER}
+          </a>
+        </p>
+      </section>
+
       {/* MLB */}
       <section>
         <h2 className="text-2xl font-semibold mb-4">⚾ MLB Prediction Engine</h2>
         <p className="text-mahogany/70 text-sm leading-relaxed mb-6">
           I was a massive FiveThirtyEight sports analytics fan — it&apos;s what got me into sports analytics and
           programming in general. Since the sports pages have since been suspended, I thought I&apos;d do my best to
-          recreate their work. Below find the live rating for my team, the Boston Red Sox.
+          recreate their work. Find the full website{" "}
+          <a href="https://samalytics-mlb.vercel.app/standings" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+            here
+          </a>. Below find the live rating for my team, the Boston Red Sox.
         </p>
 
         {bosStanding ? (
@@ -228,25 +267,6 @@ export default async function Games() {
         </p>
       </section>
 
-      {/* Chess */}
-      <section>
-        <div className="flex items-baseline justify-between mb-3">
-          <h2 className="text-2xl font-semibold">♟️ Chess</h2>
-          <span className="text-xs text-mahogany/40">Last updated: {lastUpdated}</span>
-        </div>
-        <p className="text-mahogany/70 text-sm leading-relaxed mb-6">
-          I am an avid chess player, despite my low rating. Follow me in my journey to becoming a better player.
-          My 2026 goal is to reach 1200 in blitz.
-        </p>
-        <ChessStats data={chessData} />
-        <ChessRatingChart data={ratingHistory} />
-        <p className="mt-4 text-xs text-mahogany/40">
-          Live data from{" "}
-          <a href={`https://www.chess.com/member/${CHESS_USER}`} target="_blank" className="hover:text-accent underline">
-            chess.com/member/{CHESS_USER}
-          </a>
-        </p>
-      </section>
     </div>
   );
 }
