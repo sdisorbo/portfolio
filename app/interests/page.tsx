@@ -1,4 +1,3 @@
-import { visited } from "@/data/travel";
 import { redRecs, whiteRecs, dessertRecs } from "@/data/wine-recs";
 import TravelMap from "@/components/TravelMap";
 
@@ -67,21 +66,13 @@ export default function Interests() {
 
       {/* Travel */}
       <section>
-        <h2 className="text-2xl font-semibold mb-6">✈️ Travel</h2>
+        <h2 className="text-2xl font-semibold mb-4">✈️ Travel</h2>
+        <p className="text-mahogany/70 mb-6 leading-relaxed">
+          I love to travel the world, and am using this page to keep track of every major city I&apos;ve visited worldwide!
+          Highlighted countries are places I&apos;ve been — click any one to see the cities I visited. Scroll or use the
+          buttons to zoom in.
+        </p>
         <TravelMap />
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-          {visited.map((d) => (
-            <div key={d.isoCode} className="p-4 rounded-xl border border-border bg-card">
-              <p className="font-medium text-mahogany">{d.country}</p>
-              {d.cities && (
-                <p className="text-sm text-mahogany/50 mt-0.5">
-                  {d.cities.map((c) => c.name).join(", ")}
-                </p>
-              )}
-              {d.notes && <p className="text-sm text-mahogany/60 mt-1 italic">{d.notes}</p>}
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* Wine Recs */}
