@@ -44,6 +44,13 @@ export const projects: Project[] = [
     images: ["/nhlelo_project1.png", "/nhlelo_project2.png", "/nhlelo_project3.png"],
   },
   {
+    title: "IndustryRank",
+    description: "IndustryRank is a full-stack web application that generates anonymous, community-driven rankings of companies and institutions across 14 major industries — including Investment Banking, Consulting, Big Tech, Private Equity, and more. Users vote in head-to-head matchups, and rankings are computed in real time using an ELO rating system (the same model used in competitive chess), so every vote shifts the leaderboard. The platform distinguishes between insider and outside-observer votes, and tracks career-level breakdowns so the data reflects who is actually doing the ranking. Matchups are weighted toward similarly-rated companies to maximize meaningful comparisons. Built with Next.js, Supabase (PostgreSQL), and TypeScript, with a custom seed pipeline that loaded ~900 companies and ~9,000 rating rows directly via the Supabase REST API.",
+    tags: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "ELO Rating", "Full-Stack"],
+    link: "https://github.com/sdisorbo/industryrank",
+    images: ["/indsutry1.png", "/indsutry2.png", "/indsutry3.png"],
+  },
+  {
     title: "Fine-Tuned GPT-3 Ancient Orator",
     description: "A natural language project that fine-tunes OpenAI's GPT-3 ada model to replicate the voice and rhetorical style of Demosthenes — the most celebrated orator of ancient Athens. Using cleaned and sampled text from the Olynthiac and Other Public Orations, 10,000 excerpts were prepared as training data. The model was fine-tuned for chat completion to emulate Demosthenes' tone, argument structure, and cadence. A self-training loop was built so that each user interaction was fed back into the model's fine-tuning pipeline, allowing accuracy to improve over time.",
     tags: ["Python", "OpenAI API", "GPT-3", "NLP", "Classical Civilization"],
