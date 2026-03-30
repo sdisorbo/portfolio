@@ -47,7 +47,7 @@ export const projects: Project[] = [
     title: "IndustryRank",
     description: "IndustryRank is a full-stack web application that generates anonymous, community-driven rankings of companies and institutions across 14 major industries — including Investment Banking, Consulting, Big Tech, Private Equity, and more. Users vote in head-to-head matchups, and rankings are computed in real time using an ELO rating system (the same model used in competitive chess), so every vote shifts the leaderboard. The platform distinguishes between insider and outside-observer votes, and tracks career-level breakdowns so the data reflects who is actually doing the ranking. Matchups are weighted toward similarly-rated companies to maximize meaningful comparisons. Built with Next.js, Supabase (PostgreSQL), and TypeScript, with a custom seed pipeline that loaded ~900 companies and ~9,000 rating rows directly via the Supabase REST API.",
     tags: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "ELO Rating", "Full-Stack"],
-    link: "https://github.com/sdisorbo/industryrank",
+    link: "https://industryrank.vercel.app/",
     images: ["/indsutry1.png", "/indsutry2.png", "/indsutry3.png"],
   },
   {
