@@ -50,7 +50,7 @@ const skills = [
 
 const extracurriculars = [
   "Accenture Tech Strategy Resources Assets Team — Generative AI agent development (2024–Present)",
-  "Accenture Trading, Investments and Optimization Strategy Analyst (2026–Present)",
+  "Accenture Trading, Investments and Optimization Strategy Contributor (2026–Present)",
   "SIFMA Foundation Stock Market Competition — 2nd Place (2021)",
   "Accenture 2026 Analyst Pitch Competition — Top-10 Finalist",
 ];
