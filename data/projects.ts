@@ -16,6 +16,13 @@ export const projects: Project[] = [
     images: ["/agora1.png.jpeg", "/agora2.png.jpeg", "/agora3.png.jpeg", "/agora4.png.jpeg"],
   },
   {
+    title: "Wine Copa Mundial",
+    description: "A full-stack web app I built to host a \"World Cup\" of wine among friends — nations are drawn into groups, everyone tastes and votes, and the results advance through group stages, knockouts, and a final. I built it end-to-end using Claude Code as my AI pair programmer, with a React front end, a Supabase (PostgreSQL) backend for real-time voting and standings, version control on GitHub, and continuous deployment on Vercel. It turns a fun social event into a live, interactive bracket everyone can follow from their phones.",
+    tags: ["React", "Supabase", "PostgreSQL", "Vercel", "Claude Code", "Full-Stack"],
+    link: "https://wine-copa-mundial.vercel.app/",
+    images: ["/wine_copa.png"],
+  },
+  {
     title: "The Fantasy Footballers — Data-Driven Contributor",
     description: "I write fantasy football articles for The Fantasy Footballers, the #1 fantasy football platform and podcast. My approach is analytical end-to-end: I mine and scrape player and play-by-play data, engineer performance metrics in code, and form hypotheses about usage, efficiency, and matchups — then rigorously test them against historical data before drawing conclusions. Each piece turns a statistically-backed finding into actionable, accessible fantasy advice for a large audience of managers, pairing real data science with clear storytelling.",
     tags: ["Fantasy Football", "Python", "Data Mining", "Hypothesis Testing", "Sports Analytics", "Writing"],
