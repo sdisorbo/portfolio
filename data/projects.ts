@@ -16,6 +16,13 @@ export const projects: Project[] = [
     images: ["/agora1.png.jpeg", "/agora2.png.jpeg", "/agora3.png.jpeg", "/agora4.png.jpeg"],
   },
   {
+    title: "The Fantasy Footballers — Data-Driven Contributor",
+    description: "I write fantasy football articles for The Fantasy Footballers, the #1 fantasy football platform and podcast. My approach is analytical end-to-end: I mine and scrape player and play-by-play data, engineer performance metrics in code, and form hypotheses about usage, efficiency, and matchups — then rigorously test them against historical data before drawing conclusions. Each piece turns a statistically-backed finding into actionable, accessible fantasy advice for a large audience of managers, pairing real data science with clear storytelling.",
+    tags: ["Fantasy Football", "Python", "Data Mining", "Hypothesis Testing", "Sports Analytics", "Writing"],
+    link: "https://www.thefantasyfootballers.com/author/sdisorbo/",
+    images: ["/fantasyfootballers.png"],
+  },
+  {
     title: "Undergraduate Honors Thesis — Modeling Enhancer Transcription with Transformer Architectures",
     description: "Gene expression is governed by complex interactions between regulatory elements like enhancers and promoters, and the transcription factors that bind them. While RNA-seq and ATAC-seq have expanded our understanding of transcriptional activity and chromatin accessibility, neither method directly links regulatory elements to transcriptional outcomes. This thesis addresses that gap by adapting an existing transformer-based model to enhancer-specific datasets, using a novel set of non-overlapping bidirectional enhancer sequences paired with 5' RNA sequencing data. The model successfully predicted general RNA coverage and transcription start site usage — a meaningful step toward computationally modeling how enhancers and promoters drive gene regulation.",
     tags: ["Python", "PyTorch", "Transformers", "Bioinformatics", "RNA-seq", "ATAC-seq", "University of Michigan"],
@@ -34,7 +41,7 @@ export const projects: Project[] = [
     description: "A full-stack MLB analytics platform inspired by FiveThirtyEight's prediction pages. The engine pulls live data from the MLB Stats API, computes ELO ratings game-by-game across the full season, and runs daily Monte Carlo playoff simulations to generate win probabilities by round for all 30 teams. A GitHub Actions cron job refreshes the data every morning and commits updated JSON files, which the Next.js frontend consumes directly. Features include an interactive standings table with ELO ratings and playoff odds, a pitcher stats dot plot grouped by division, and a team ELO rating history chart.",
     tags: ["Python", "Next.js", "ELO Rating", "Monte Carlo Simulation", "MLB Stats API", "GitHub Actions", "Sports Analytics"],
     link: "https://samalytics-mlb.vercel.app/standings",
-    images: ["/mlbproject2.png", "/mlbproject3.png"],
+    images: ["/samalytics7.3.png", "/mlbproject2.png", "/mlbproject3.png"],
   },
   {
     title: "NHL ELO Rating Model & Playoff Simulator",

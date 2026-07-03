@@ -33,14 +33,14 @@ export default function ProjectCard({
         <img
           src={cover}
           alt={title}
-          className="absolute inset-0 h-full w-full object-cover opacity-40 transition-all duration-500 group-hover:scale-105 group-hover:opacity-30"
+          className="absolute inset-0 h-full w-full object-cover opacity-70 transition-all duration-500 group-hover:scale-105 group-hover:opacity-60"
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-accent/40 to-mahogany" />
       )}
 
       {/* Readability wash */}
-      <div className="absolute inset-0 bg-gradient-to-t from-mahogany via-mahogany/75 to-mahogany/25" />
+      <div className="absolute inset-0 bg-gradient-to-t from-mahogany/50 via-mahogany/38 to-mahogany/12" />
 
       {/* Techy grid texture */}
       <div
