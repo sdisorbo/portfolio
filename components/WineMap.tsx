@@ -26,7 +26,8 @@ function mergedRegions(c: WineCountry | null): RegionNote[] {
   for (const r of c.regions ?? []) map[r.region.toLowerCase()] = { ...r };
   const extra = annotations?.[c.name] ?? {};
   for (const [name, a] of Object.entries(extra)) {
-    map[name.toLowerCase()] = { region: name, ...map[name.toLowerCase()], ...a };
+    const base = map[name.toLowerCase()] ?? {};
+    map[name.toLowerCase()] = { ...base, ...a, region: name };
   }
   return Object.values(map);
 }
