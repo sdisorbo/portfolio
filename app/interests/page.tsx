@@ -175,10 +175,32 @@ export default async function Interests() {
 
       {/* Wine */}
       <section>
-        <h2 className="text-2xl font-semibold mb-2">Wine</h2>
-        <p className="text-xs text-mahogany/40 mb-8 italic">
-          A random red and white from my ratings, refreshed daily
+        <h2 className="text-2xl font-semibold mb-3">Wine</h2>
+        <p className="text-mahogany/70 text-sm leading-relaxed mb-6">
+          These are my personal wine ratings — every bottle I&apos;ve tried, scored on a
+          0–5 scale. Below, a random red and white from the list, refreshed daily.
         </p>
+
+        {/* Scoring key */}
+        <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            { range: "0 – 2.4", label: "Below average", note: "Avoid", color: "#B54B3A" },
+            { range: "2.5 – 3.0", label: "Average", note: "Don't recommend", color: "#C9814B" },
+            { range: "3.1 – 3.9", label: "Above average", note: "Worth trying", color: "#8FA05A" },
+            { range: "4.0 – 5.0", label: "Highly recommend", note: "Must try", color: "#5A8F7B" },
+          ].map((tier) => (
+            <div
+              key={tier.range}
+              className="rounded-xl border border-border bg-card p-3"
+              style={{ borderLeft: `4px solid ${tier.color}` }}
+            >
+              <p className="text-sm font-semibold text-mahogany">{tier.range}</p>
+              <p className="text-xs text-mahogany/70">{tier.label}</p>
+              <p className="text-[11px] text-mahogany/40">{tier.note}</p>
+            </div>
+          ))}
+        </div>
+
         <WineOfTheDay />
       </section>
 
