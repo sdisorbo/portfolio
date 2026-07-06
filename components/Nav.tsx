@@ -8,7 +8,6 @@ const links = [
   { href: "/professional", label: "Professional" },
   { href: "/projects", label: "Projects" },
   { href: "/interests", label: "Interests" },
-  { href: "/games", label: "Games" },
 ];
 
 export default function Nav() {

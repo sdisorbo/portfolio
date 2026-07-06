@@ -4,8 +4,7 @@ import { Github, Linkedin, Download, ExternalLink } from "lucide-react";
 const sections = [
   { href: "/professional", label: "Professional", desc: "My role at Accenture, interests in ML, energy, and financial markets." },
   { href: "/projects", label: "Projects", desc: "Research, analytics work, and side projects." },
-  { href: "/interests", label: "Interests", desc: "Wine log, restaurant tracker, travel map, and reading list." },
-  { href: "/games", label: "Games", desc: "Chess ratings, poker P&L, and the data behind the losses." },
+  { href: "/interests", label: "Interests", desc: "Wine, chess ratings, and Red Sox analytics." },
 ];
 
 export default function Home() {
@@ -64,6 +63,16 @@ export default function Home() {
             <p className="text-sm text-mahogany/60 leading-relaxed">{s.desc}</p>
           </Link>
         ))}
+      </div>
+
+      {/* Subtle admin entry */}
+      <div className="mt-24 text-center">
+        <Link
+          href="/admin"
+          className="text-[11px] text-mahogany/20 hover:text-mahogany/50 transition-colors"
+        >
+          ·
+        </Link>
       </div>
     </div>
   );

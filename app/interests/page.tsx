@@ -1,99 +1,289 @@
-import { redRecs, whiteRecs, dessertRecs } from "@/data/wine-recs";
-import TravelMap from "@/components/TravelMap";
+import WineOfTheDay from "@/components/WineOfTheDay";
+import WineMap from "@/components/WineMap";
+import ChessStats from "@/components/ChessStats";
+import ChessRatingChart, { RatingEntry } from "@/components/ChessRatingChart";
+import RedSoxRatingChart, { RatingPoint } from "@/components/RedSoxRatingChart";
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-1">
-      {[1, 2, 3, 4, 5].map((star) => {
-        const filled = rating >= star;
-        const partial = !filled && rating > star - 1;
-        const pct = partial ? Math.round((rating - (star - 1)) * 100) : 0;
-        return (
-          <span key={star} className="relative inline-block text-base leading-none">
-            <span className="text-mahogany/20">★</span>
-            {(filled || partial) && (
-              <span
-                className="absolute inset-0 overflow-hidden text-accent"
-                style={{ width: filled ? "100%" : `${pct}%` }}
-              >
-                ★
-              </span>
-            )}
-          </span>
-        );
-      })}
-      <span className="text-xs text-mahogany/40 ml-1">{rating.toFixed(1)}</span>
-    </div>
-  );
-}
+const CHESS_USER = "samdisorbo";
+const HEADERS = { "User-Agent": "portfolio-site" };
+const MLB_BASE = "https://raw.githubusercontent.com/sdisorbo/samalytics-mlb/master/data/output";
 
-function WineRecList({ recs }: { recs: { name: string; region: string; rating?: number; notes?: string; link?: string }[] }) {
-  if (recs.length === 0) {
-    return <p className="text-mahogany/40 text-sm italic">Recommendations coming soon.</p>;
+// ── Chess ──────────────────────────────────────────────────
+
+async function getChessStats() {
+  try {
+    const res = await fetch(`https://api.chess.com/pub/player/${CHESS_USER}/stats`, {
+      next: { revalidate: 3600 },
+      headers: HEADERS,
+    });
+    return res.json();
+  } catch {
+    return {};
   }
-  return (
-    <ul className="space-y-3">
-      {recs.map((w) => {
-        const Wrapper = w.link ? "a" : "div";
-        const props = w.link ? { href: w.link, target: "_blank", rel: "noopener noreferrer" } : {};
-        return (
-          <li key={w.name}>
-            <Wrapper
-              {...(props as any)}
-              className="block p-4 rounded-xl border border-border bg-card hover:border-accent hover:shadow-sm transition-all"
-            >
-              <p className="font-medium text-mahogany">{w.name} {w.link && "→"}</p>
-              <p className="text-sm text-mahogany/50">{w.region}</p>
-              {w.rating !== undefined && (
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-mahogany/40">My Rating:</span>
-                  <StarRating rating={w.rating} />
-                </div>
-              )}
-              {w.notes && <p className="text-sm text-mahogany/60 mt-1 italic">{w.notes}</p>}
-            </Wrapper>
-          </li>
-        );
-      })}
-    </ul>
-  );
 }
 
-export default function Interests() {
+async function getChessRatingHistory(): Promise<RatingEntry[]> {
+  try {
+    const archivesRes = await fetch(`https://api.chess.com/pub/player/${CHESS_USER}/games/archives`, {
+      next: { revalidate: 86400 },
+      headers: HEADERS,
+    });
+    const { archives } = await archivesRes.json();
+    if (!archives?.length) return [];
+
+    const recentArchives: string[] = archives;
+
+    const monthly = await Promise.all(
+      recentArchives.map(async (url: string) => {
+        const parts = url.split("/");
+        const year = parts[parts.length - 2];
+        const month = parts[parts.length - 1];
+        const date = `${year}-${month}`;
+
+        try {
+          const gamesRes = await fetch(url, {
+            next: { revalidate: 86400 },
+            headers: HEADERS,
+          });
+          const { games } = await gamesRes.json();
+          if (!games?.length) return { date };
+
+          const lastByControl: Record<string, { rating: number }> = {};
+          for (const game of games) {
+            const tc: string = game.time_class;
+            if (!["rapid", "blitz", "bullet"].includes(tc)) continue;
+            const isWhite = game.white.username.toLowerCase() === CHESS_USER.toLowerCase();
+            const rating: number = isWhite ? game.white.rating : game.black.rating;
+            lastByControl[tc] = { rating };
+          }
+
+          const entry: RatingEntry = { date };
+          if (lastByControl.rapid)  entry.rapid  = lastByControl.rapid.rating;
+          if (lastByControl.blitz)  entry.blitz  = lastByControl.blitz.rating;
+          if (lastByControl.bullet) entry.bullet = lastByControl.bullet.rating;
+          return entry;
+        } catch {
+          return { date };
+        }
+      })
+    );
+
+    return monthly.filter((e) => e.rapid || e.blitz || e.bullet);
+  } catch {
+    return [];
+  }
+}
+
+// ── Red Sox / MLB ──────────────────────────────────────────
+
+interface StandingEntry {
+  team: string;
+  team_abbr: string;
+  division: string;
+  elo_rating: number;
+  elo_change_7d: number;
+  wins: number;
+  losses: number;
+  run_diff: number;
+  playoff_probability: number;
+  win_ds: number;
+  win_cs: number;
+  win_ws: number;
+}
+
+interface PlayoffOddsEntry {
+  team: string;
+  win_wildcard?: number;
+  win_ds: number;
+  win_cs: number;
+  win_ws: number;
+}
+
+async function getRedSoxStanding(): Promise<(StandingEntry & { rank: number }) | null> {
+  try {
+    const res = await fetch(`${MLB_BASE}/standings.json`, { next: { revalidate: 3600 } });
+    const data: StandingEntry[] = await res.json();
+    const bos = data.find((t) => t.team_abbr === "BOS");
+    if (!bos) return null;
+    const rank = [...data].sort((a, b) => b.elo_rating - a.elo_rating).findIndex((t) => t.team_abbr === "BOS") + 1;
+    return { ...bos, rank };
+  } catch {
+    return null;
+  }
+}
+
+async function getRedSoxRatingHistory(): Promise<RatingPoint[]> {
+  try {
+    const res = await fetch(`${MLB_BASE}/team_ratings_history.json`, { next: { revalidate: 3600 } });
+    const data = await res.json();
+    const bosHistory = (data["BOS"] as { date: string; rating: number }[]) ?? [];
+
+    // Build date -> all team ratings map for league high/low
+    const dateMap: Record<string, number[]> = {};
+    for (const teamHistory of Object.values(data) as { date: string; rating: number }[][]) {
+      for (const pt of teamHistory) {
+        if (!dateMap[pt.date]) dateMap[pt.date] = [];
+        dateMap[pt.date].push(pt.rating);
+      }
+    }
+
+    return bosHistory.map((pt) => ({
+      date: pt.date,
+      rating: pt.rating,
+      leagueHigh: Math.max(...(dateMap[pt.date] ?? [pt.rating])),
+      leagueLow: Math.min(...(dateMap[pt.date] ?? [pt.rating])),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function getRedSoxPlayoffOdds(): Promise<PlayoffOddsEntry | null> {
+  try {
+    const res = await fetch(`${MLB_BASE}/playoff_odds.json`, { next: { revalidate: 3600 } });
+    const data = await res.json();
+    return (data.results as PlayoffOddsEntry[])?.find((t) => t.team === "BOS") ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function pct(val: number | undefined) {
+  if (val == null) return "—";
+  return `${Math.round(val * 100)}%`;
+}
+
+function sign(n: number) {
+  return n >= 0 ? `+${n.toFixed(1)}` : n.toFixed(1);
+}
+
+// ── Page ───────────────────────────────────────────────────
+
+export default async function Interests() {
+  const [chessData, ratingHistory, bosStanding, bosHistory, bosOdds] = await Promise.all([
+    getChessStats(),
+    getChessRatingHistory(),
+    getRedSoxStanding(),
+    getRedSoxRatingHistory(),
+    getRedSoxPlayoffOdds(),
+  ]);
+
+  const lastUpdated = new Date().toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-16 space-y-20">
       <h1 className="text-4xl font-bold tracking-tight">Interests</h1>
 
-      {/* Travel */}
+      {/* Wine */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">✈️ Travel</h2>
-        <p className="text-mahogany/70 mb-6 leading-relaxed">
-          I love to travel the world, and am using this page to keep track of every major city I&apos;ve visited worldwide!
-          Highlighted countries are places I&apos;ve been — click any one to see the cities I visited. Scroll or use the
-          buttons to zoom in.
+        <h2 className="text-2xl font-semibold mb-2">🍷 Wine</h2>
+        <p className="text-xs text-mahogany/40 mb-8 italic">
+          A random red and white from my Vivino reviews, refreshed daily
         </p>
-        <TravelMap />
+        <WineOfTheDay />
+
+        <div className="mt-12">
+          <h3 className="text-lg font-medium mb-1">Wine Map</h3>
+          <p className="text-xs text-mahogany/40 mb-4 italic">
+            Regions I&apos;ve explored — click a country to zoom in
+          </p>
+          <WineMap />
+        </div>
       </section>
 
-      {/* Wine Recs */}
+      {/* Chess */}
       <section>
-        <h2 className="text-2xl font-semibold mb-2">🍷 Wine Recommendations</h2>
-        <p className="text-xs text-mahogany/40 mb-8 italic">A curated list of bottles worth seeking out</p>
-
-        <div className="space-y-10">
-          <div>
-            <h3 className="font-medium text-lg mb-4">Red</h3>
-            <WineRecList recs={redRecs} />
-          </div>
-          <div>
-            <h3 className="font-medium text-lg mb-4">White</h3>
-            <WineRecList recs={whiteRecs} />
-          </div>
-          <div>
-            <h3 className="font-medium text-lg mb-4">Dessert</h3>
-            <WineRecList recs={dessertRecs} />
-          </div>
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="text-2xl font-semibold">♟️ Chess</h2>
+          <span className="text-xs text-mahogany/40">Last updated: {lastUpdated}</span>
         </div>
+        <p className="text-mahogany/70 text-sm leading-relaxed mb-6">
+          I am an avid chess player, despite my low rating. Follow me in my journey to becoming a better player.
+          My 2026 goal is to reach 1200 in blitz.
+        </p>
+        <ChessStats data={chessData} />
+        <ChessRatingChart data={ratingHistory} />
+        <p className="mt-4 text-xs text-mahogany/40">
+          Live data from{" "}
+          <a href={`https://www.chess.com/member/${CHESS_USER}`} target="_blank" className="hover:text-accent underline">
+            chess.com/member/{CHESS_USER}
+          </a>
+        </p>
+      </section>
+
+      {/* Baseball */}
+      <section>
+        <h2 className="text-2xl font-semibold mb-4">⚾ Baseball</h2>
+        <p className="text-mahogany/70 text-sm leading-relaxed mb-6">
+          I was a massive FiveThirtyEight sports analytics fan — it&apos;s what got me into sports analytics and
+          programming in general. Since the sports pages have since been suspended, I thought I&apos;d do my best to
+          recreate their work. Find the full website{" "}
+          <a href="https://samalytics-mlb.vercel.app/standings" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+            here
+          </a>. Below find the live rating for my team, the Boston Red Sox.
+        </p>
+
+        {bosStanding ? (
+          <>
+            {/* Stat cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-2">
+              <div className="p-5 rounded-xl border border-border bg-card">
+                <p className="text-xs uppercase tracking-widest text-mahogany/40 mb-2">ELO Rating</p>
+                <p className="text-3xl font-bold text-mahogany">{Math.round(bosStanding.elo_rating)}</p>
+                <p className="text-xs text-mahogany/50 mt-1">
+                  7d: <span className={bosStanding.elo_change_7d >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                    {sign(bosStanding.elo_change_7d)}
+                  </span>
+                </p>
+              </div>
+              <div className="p-5 rounded-xl border border-border bg-card">
+                <p className="text-xs uppercase tracking-widest text-mahogany/40 mb-2">League Rank</p>
+                <p className="text-3xl font-bold text-mahogany">#{bosStanding.rank}</p>
+                <p className="text-xs text-mahogany/50 mt-1">of 30 teams</p>
+              </div>
+              <div className="p-5 rounded-xl border border-border bg-card">
+                <p className="text-xs uppercase tracking-widest text-mahogany/40 mb-2">Record</p>
+                <p className="text-3xl font-bold text-mahogany">{bosStanding.wins}–{bosStanding.losses}</p>
+                <p className="text-xs text-mahogany/50 mt-1">Run diff: {bosStanding.run_diff > 0 ? `+${bosStanding.run_diff}` : bosStanding.run_diff}</p>
+              </div>
+              <div className="p-5 rounded-xl border border-border bg-card">
+                <p className="text-xs uppercase tracking-widest text-mahogany/40 mb-2">Playoff Odds</p>
+                <p className="text-3xl font-bold text-mahogany">{pct(bosStanding.playoff_probability)}</p>
+                <p className="text-xs text-mahogany/50 mt-1">make playoffs</p>
+              </div>
+            </div>
+
+            {/* Playoff round odds */}
+            {bosOdds && (
+              <div className="grid grid-cols-3 gap-4 mt-4">
+                <div className="p-4 rounded-xl border border-border bg-card text-center">
+                  <p className="text-xs uppercase tracking-widest text-mahogany/40 mb-1">Win Div. Series</p>
+                  <p className="text-2xl font-semibold text-mahogany">{pct(bosOdds.win_ds)}</p>
+                </div>
+                <div className="p-4 rounded-xl border border-border bg-card text-center">
+                  <p className="text-xs uppercase tracking-widest text-mahogany/40 mb-1">Win Ch. Series</p>
+                  <p className="text-2xl font-semibold text-mahogany">{pct(bosOdds.win_cs)}</p>
+                </div>
+                <div className="p-4 rounded-xl border border-border bg-card text-center">
+                  <p className="text-xs uppercase tracking-widest text-mahogany/40 mb-1">Win World Series</p>
+                  <p className="text-2xl font-semibold text-mahogany">{pct(bosOdds.win_ws)}</p>
+                </div>
+              </div>
+            )}
+
+            <RedSoxRatingChart data={bosHistory} />
+          </>
+        ) : (
+          <p className="text-mahogany/40 text-sm italic">MLB data unavailable — check back during the season.</p>
+        )}
+
+        <p className="mt-4 text-xs text-mahogany/40">
+          Powered by my{" "}
+          <a href="https://samalytics-mlb.vercel.app/standings" target="_blank" rel="noopener noreferrer" className="hover:text-accent underline">
+            MLB Prediction Engine
+          </a>
+          {" "}— ELO ratings &amp; playoff odds updated daily.
+        </p>
       </section>
     </div>
   );

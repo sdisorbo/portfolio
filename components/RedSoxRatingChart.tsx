@@ -52,7 +52,7 @@ export default function RedSoxRatingChart({ data }: { data: RatingPoint[] }) {
 
           {/* Shaded band: fill leagueHigh down to baseline with gray, then mask with white up to leagueLow */}
           <Area
-            type="natural"
+            type="monotone"
             dataKey="leagueHigh"
             stroke="#9ca3af"
             strokeWidth={1}
@@ -63,7 +63,7 @@ export default function RedSoxRatingChart({ data }: { data: RatingPoint[] }) {
             isAnimationActive={false}
           />
           <Area
-            type="natural"
+            type="monotone"
             dataKey="leagueLow"
             stroke="#9ca3af"
             strokeWidth={1}
@@ -76,7 +76,7 @@ export default function RedSoxRatingChart({ data }: { data: RatingPoint[] }) {
 
           {/* Main BOS line */}
           <Line
-            type="natural"
+            type="monotone"
             dataKey="rating"
             stroke="#bd3b3b"
             strokeWidth={2.5}
