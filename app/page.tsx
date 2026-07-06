@@ -64,16 +64,6 @@ export default function Home() {
           </Link>
         ))}
       </div>
-
-      {/* Subtle admin entry */}
-      <div className="mt-24 text-center">
-        <Link
-          href="/admin"
-          className="text-[11px] text-mahogany/20 hover:text-mahogany/50 transition-colors"
-        >
-          ·
-        </Link>
-      </div>
     </div>
   );
 }

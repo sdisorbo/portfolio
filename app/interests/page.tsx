@@ -1,5 +1,4 @@
 import WineOfTheDay from "@/components/WineOfTheDay";
-import WineMap from "@/components/WineMap";
 import ChessStats from "@/components/ChessStats";
 import ChessRatingChart, { RatingEntry } from "@/components/ChessRatingChart";
 import RedSoxRatingChart, { RatingPoint } from "@/components/RedSoxRatingChart";
@@ -176,25 +175,17 @@ export default async function Interests() {
 
       {/* Wine */}
       <section>
-        <h2 className="text-2xl font-semibold mb-2">🍷 Wine</h2>
+        <h2 className="text-2xl font-semibold mb-2">Wine</h2>
         <p className="text-xs text-mahogany/40 mb-8 italic">
-          A random red and white from my Vivino reviews, refreshed daily
+          A random red and white from my ratings, refreshed daily
         </p>
         <WineOfTheDay />
-
-        <div className="mt-12">
-          <h3 className="text-lg font-medium mb-1">Wine Map</h3>
-          <p className="text-xs text-mahogany/40 mb-4 italic">
-            Regions I&apos;ve explored — click a country to zoom in
-          </p>
-          <WineMap />
-        </div>
       </section>
 
       {/* Chess */}
       <section>
         <div className="flex items-baseline justify-between mb-3">
-          <h2 className="text-2xl font-semibold">♟️ Chess</h2>
+          <h2 className="text-2xl font-semibold">Chess</h2>
           <span className="text-xs text-mahogany/40">Last updated: {lastUpdated}</span>
         </div>
         <p className="text-mahogany/70 text-sm leading-relaxed mb-6">
@@ -213,7 +204,7 @@ export default async function Interests() {
 
       {/* Baseball */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">⚾ Baseball</h2>
+        <h2 className="text-2xl font-semibold mb-4">Baseball</h2>
         <p className="text-mahogany/70 text-sm leading-relaxed mb-6">
           I was a massive FiveThirtyEight sports analytics fan — it&apos;s what got me into sports analytics and
           programming in general. Since the sports pages have since been suspended, I thought I&apos;d do my best to
